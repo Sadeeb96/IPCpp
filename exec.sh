@@ -1,0 +1,1 @@
+g++ -std=c++17 -pthread -o binary.o main.cpp && ./binary.o
