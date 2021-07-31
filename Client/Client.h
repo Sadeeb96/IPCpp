@@ -28,6 +28,10 @@ private:
     bool isServerMessage(string s){
         return s.rfind(serverPrefix,0)==0;
     }
+    void waitForReply(function<void(string)>callback){
+        while (!isServerMessage(readLastLine(getFullPath()))){}
+        callback(readLastLine(getFullPath()));
+    }
 public:
     Client(){
         init();
@@ -74,12 +78,13 @@ public:
     bool send(string msg,function<void(string)>callback){
         writeToEnd(getFullPath(),clientPrefix+msg);
         this_thread::sleep_for(chrono::milliseconds(1));
-        while (!isServerMessage(readLastLine(getFullPath()))){}
-        callback(readLastLine(getFullPath()));
+        
+        thread waitThread(&Client::waitForReply,this,callback);
+        waitThread.detach();
         return true;
     }
     ~Client(){
-
+        
     }
 };
 

@@ -22,6 +22,8 @@ void testClient(){
             cout<<"Server Reply: "<<msg<<endl;
         });
     }
+    int x;
+    cin>>x;
 }
 int main(){
     
