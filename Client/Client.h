@@ -13,7 +13,7 @@ private:
     string fileName;
     const int retryCount = 50;
     const string clientPrefix = "_CLIENT_:";
-    const string ServerPrefix = "_SERVER_:";
+    const string serverPrefix = "_SERVER_:";
 private:
     void init(){
         this->path = getpwuid(getuid())->pw_dir;
@@ -24,6 +24,9 @@ private:
     }
     bool checkServer(){
         return checkFile(getFullPath());
+    }
+    bool isServerMessage(string s){
+        return s.rfind(serverPrefix,0)==0;
     }
 public:
     Client(){
@@ -51,14 +54,28 @@ public:
 
     /* 
     Description:
-    Send a message to Server.
+    Send a message to Server. Dont wait for reply.
 
     Parameters:
     msg: Message in string format
-    wait: Wait for Reply
     */
-    bool send(string msg,bool wait){
+    bool send(string msg){
         writeToEnd(getFullPath(),clientPrefix+msg);
+        return true;
+    }
+    /* 
+    Description:
+    Send a message to Server and wait for reply.
+
+    Parameters:
+    msg: Message in string format
+    callback: Function to process the reply
+    */
+    bool send(string msg,function<void(string)>callback){
+        writeToEnd(getFullPath(),clientPrefix+msg);
+        this_thread::sleep_for(chrono::milliseconds(1));
+        while (!isServerMessage(readLastLine(getFullPath()))){}
+        callback(readLastLine(getFullPath()));
         return true;
     }
     ~Client(){

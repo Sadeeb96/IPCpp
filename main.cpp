@@ -7,18 +7,20 @@
 Server* server;
 Client* client;
 void testServer(){
-    server = new Server("demo",[&](string msg){
+    server = new Server("demo1",[&](string msg){
         cout<<"Server Recieved Message: "<<msg<<endl;
-        server->reply("Recieved");
+        server->reply("Hello Client");
     });
     server->startServer();
 }
 void testClient(){
     client  = new Client();
-    if(client->connect("demo")){
+    if(client->connect("demo1")){
         string msg;
         getline(cin,msg);
-        client->send(msg,false);
+        client->send(msg,[](string msg){
+            cout<<"Server Reply: "<<msg<<endl;
+        });
     }
 }
 int main(){
@@ -31,6 +33,7 @@ int main(){
     testServer();
     int x;
     cin>>x;
+    server->stopServer();
     #endif
 
 }

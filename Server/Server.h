@@ -32,6 +32,9 @@ private:
         }
         return createDirectory(this->path);
     }
+    string getFullPath(){
+        return path+"/"+fileName;
+    }
     void init()
     {
         this->path = getpwuid(getuid())->pw_dir;
@@ -40,8 +43,8 @@ private:
         {
             return;
         }
-        createFile(this->path + "/" + this->fileName);
-        fw = new FileWatcher(this->path, std::chrono::milliseconds(1000));
+        createFile(getFullPath());
+        fw = new FileWatcher(this->path, std::chrono::milliseconds(10));
     }
     void dispatch(string path){
         if(path != (this->path + "/" + this->fileName)){
@@ -97,10 +100,13 @@ public:
         init();
     }
     bool reply(string msg){
-        cout<<msg<<endl;
+        writeToEnd(getFullPath(),ServerPrefix+msg);
         return true;
     }
-
+    bool acknowledge(){
+        writeToEnd(getFullPath(),ServerPrefix+"ACK");
+        return true;
+    }
     /* 
     Description:
     Start IPC Server and listen for client messages
@@ -124,10 +130,11 @@ public:
     */
     bool stopServer(){
         fw->stop();
+        deleteFile(getFullPath());
         return true;
     }
     ~Server() {
-        stopServer();
+        
     }
 };
 

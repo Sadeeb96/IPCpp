@@ -6,43 +6,57 @@
 #include "../includes/pch.h"
 #include <fstream>
 #include <iomanip>
+int readcnt=0;
+bool deleteFile(string path){
+    try {
+        if(std::filesystem::remove(path)){
+        }
+        return true;
+        
+    }
+    catch(const std::filesystem::filesystem_error& err) {
+        return false;
+    }
+    return true;
+}
 bool directoryExists(string path)
 {
-    cout << "Checking Directory: " << path << endl;
+    //cout << "Checking Directory: " << path << endl;
     DIR *dir = opendir(path.c_str());
     if (dir)
     {
-        cout << "Directory Exists" << endl;
+      //  cout << "Directory Exists" << endl;
         closedir(dir);
         return true;
     }
-    cout << "Directory Doesn't Exist" << endl;
+    //cout << "Directory Doesn't Exist" << endl;
     closedir(dir);
     return false;
 }
 bool createDirectory(string path)
 {
-    cout << "Creating Directory: " << path << endl;
+    //cout << "Creating Directory: " << path << endl;
     if (mkdir(path.c_str(), 0777) == 0)
     {
-        cout << "Directory Created Sucesfully" << endl;
+      //  cout << "Directory Created Sucesfully" << endl;
         return true;
     }
-    cout << "Directory Creation Failed" << endl;
+    //cout << "Directory Creation Failed" << endl;
     return false;
 }
 void createFile(string path)
 {
-    cout << "Checking File: " << path << endl;
+    //cout << "Checking File: " << path << endl;
     ofstream outfile(path);
     outfile<<"START"<<endl;
     outfile.close();
 }
 string readLastLine(string path)
 {
+    readcnt++;
     ifstream fin;
     string myLine;
-    cout<<"Reading File "<<path<<endl;
+    //cout<<"Reading File "<<path<<" Count:"<<readcnt<<endl;
     fin.open(path);
 
     if(fin.is_open())
