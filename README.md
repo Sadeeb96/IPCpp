@@ -25,14 +25,29 @@ First create a ```Server``` object with Name and Callback for handling recieved 
 ```
 
 ### Client
+```Client``` can send message ```Server``` and can either wait for reply or not.
+#### Send Message and Wait for Reply
+Create a ```Client``` object and use ```connect()``` method to connect to a Server by server name. If connection sucessful send message to Server and pass a function which will process the reply from server. For example:
+```
+    Client* client  = new Client();
+    if(client->connect("ServerName")){
+        string msg;
+        getline(cin,msg);
+        client->send(msg,[](string msg){
+            cout<<"Server Reply: "<<msg<<endl;
+        });
+    }
+```
+#### Send Message and Don't Wait for Reply
 Create a ```Client``` object and use ```connect()``` method to connect to a Server by server name. If connection sucessful send message to Server. For example:
 ```
     Client* client  = new Client();
     if(client->connect("ServerName")){
         string msg;
         getline(cin,msg);
-        client->send(msg,false);
+        client->send(msg);
     }
 ```
+
 ## Reference
 1) https://github.com/sol-prog/cpp17-filewatcher
