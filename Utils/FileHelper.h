@@ -1,3 +1,5 @@
+#ifndef FILE_HELPER
+#define FILE_HELPER
 #include <dirent.h>
 #include <sys/stat.h>
 #include <fstream>
@@ -56,3 +58,15 @@ string readLastLine(string path)
     }
     return "ERROR_";
 }
+void writeToEnd(string path,string msg){
+    ofstream out;
+    out.open(path, ios::app);
+    out << msg <<endl;
+    out.close();
+}
+
+bool checkFile (string name) {
+  struct stat buffer;   
+  return (stat (name.c_str(), &buffer) == 0); 
+}
+#endif

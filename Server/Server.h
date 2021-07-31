@@ -13,8 +13,17 @@ private:
     string fileName;
     FileWatcher *fw = nullptr;
     function<void(string)> callback;
+    const string clientPrefix = "_CLIENT_:";
+    const string ServerPrefix = "_SERVER_:";
 
 private:
+    /* 
+    Description:
+    Check if IPC Directory exists if Not create
+
+    Parameters:
+
+    */    
     bool checkAndCreate()
     {
         if (directoryExists(this->path))
@@ -32,13 +41,19 @@ private:
             return;
         }
         createFile(this->path + "/" + this->fileName);
-        fw = new FileWatcher("/home/ahsan/ascipc", std::chrono::milliseconds(1000));
+        fw = new FileWatcher(this->path, std::chrono::milliseconds(1000));
     }
     void dispatch(string path){
         if(path != (this->path + "/" + this->fileName)){
             return;
         }
-        callback(readLastLine(path));
+        string lastMessage = readLastLine(path);
+        if(isClientMessage(lastMessage)){
+            callback(lastMessage);
+        }
+    }
+    bool isClientMessage(string s){
+        return s.rfind(clientPrefix,0)==0;
     }
     void startWatching()
     {
@@ -69,23 +84,51 @@ private:
     }
 
 public:
-    Server(string fn,function<void(string)>cf) : fileName(fn+"ServerFile"),callback(cf)
+    /* 
+     Summary:
+     Creates an IPC Server
+     
+     Paramaters:
+        serverName: Name of the Server
+        callBack: Callback function of type void(string)
+     */    
+    Server(string serverName,function<void(string)>callBack) : fileName(serverName),callback(callBack)
     {
         init();
-        
     }
-    
+    bool reply(string msg){
+        cout<<msg<<endl;
+        return true;
+    }
+
+    /* 
+    Description:
+    Start IPC Server and listen for client messages
+
+    Parameters:
+
+    */
     bool startServer()
     {
         thread watcherThread(&Server::startWatching,this);
         watcherThread.detach();
         return true;
     }
+
+    /* 
+    Description:
+    Stop IPC Server
+
+    Parameters:
+    
+    */
     bool stopServer(){
         fw->stop();
         return true;
     }
-    ~Server() {}
+    ~Server() {
+        stopServer();
+    }
 };
 
 #endif
