@@ -34,3 +34,5 @@ Create a ```Client``` object and use ```connect()``` method to connect to a Serv
         client->send(msg,false);
     }
 ```
+## Reference
+1) https://github.com/sol-prog/cpp17-filewatcher
