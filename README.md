@@ -1,5 +1,5 @@
 # IPCpp
-IPCpp is a light weight IPC library which uses shared-file to communicate between two seperate C++ applications.
+IPCpp is an IPC library which uses shared-file to communicate between two seperate C++ applications.
 
 ## Build
 Build using the following command
